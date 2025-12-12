@@ -1,0 +1,771 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Money Tracker</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --ios-blue: #007AFF;
+      --ios-purple: #5856D6;
+      --ios-red: #FF3B30;
+      --ios-green: #34C759;
+      --ios-orange: #FF9500;
+      --ios-gray: #8E8E93;
+      --ios-light-gray: #F2F2F7;
+      --ios-card-bg: #FFFFFF;
+      --ios-separator: #C6C6C8;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      background: var(--ios-light-gray);
+      min-height: 100vh;
+      padding: 0;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* iOS Status Bar */
+    .status-bar {
+      height: 44px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* iOS Navigation Bar */
+    .navbar-ios {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 0 16px 16px 16px;
+      color: white;
+    }
+
+    .navbar-title {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+
+    .navbar-subtitle {
+      font-size: 17px;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .btn-trash {
+      position: absolute;
+      top: 52px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: none;
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-trash:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* iOS Content Container */
+    .ios-container {
+      max-width: 428px;
+      margin: 0 auto;
+      background: var(--ios-light-gray);
+      min-height: calc(100vh - 60px);
+      padding-bottom: 40px;
+    }
+
+    /* iOS Card Style */
+    .ios-card {
+      background: var(--ios-card-bg);
+      border-radius: 16px;
+      margin: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .ios-card-content {
+      padding: 20px;
+    }
+
+    /* Balance Section */
+    .balance-section {
+      text-align: left;
+    }
+
+    .balance-label {
+      font-size: 17px;
+      color: var(--ios-gray);
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .balance-amount {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--ios-purple);
+      letter-spacing: -1px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 12px;
+      margin: 16px;
+    }
+
+    .stat-item {
+      background: var(--ios-card-bg);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-label {
+      font-size: 15px;
+      color: var(--ios-gray);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ios-purple);
+      letter-spacing: -0.5px;
+    }
+
+    /* Form Section */
+    .form-section-header {
+      padding: 16px 16px 8px 16px;
+      font-size: 13px;
+      color: var(--ios-gray);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+    }
+
+    .ios-input-group {
+      background: var(--ios-card-bg);
+      border-radius: 16px;
+      margin: 0 16px 16px 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .ios-input-row {
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--ios-separator);
+      display: flex;
+      align-items: center;
+    }
+
+    .ios-input-row:last-child {
+      border-bottom: none;
+    }
+
+    .ios-label {
+      font-size: 17px;
+      color: #000;
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    .ios-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 17px;
+      padding: 8px 0;
+      color: #000;
+      font-weight: 400;
+    }
+
+    .ios-input:focus {
+      outline: none;
+    }
+
+    .ios-input::placeholder {
+      color: var(--ios-gray);
+    }
+
+    /* iOS Buttons */
+    .ios-button {
+      width: calc(100% - 32px);
+      margin: 0 16px 16px 16px;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: 600;
+      color: white;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .ios-button:active {
+      transform: scale(0.98);
+      opacity: 0.85;
+    }
+
+    .btn-primary-ios {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .btn-success-ios {
+      background: var(--ios-green);
+    }
+
+    .btn-danger-ios {
+      background: var(--ios-red);
+    }
+
+    .btn-secondary-ios {
+      background: var(--ios-gray);
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 0 16px 16px 16px;
+    }
+
+    .button-group .ios-button {
+      width: 100%;
+      margin: 0;
+    }
+
+    /* Tasks List */
+    .task-list-header {
+      padding: 24px 16px 8px 16px;
+      font-size: 13px;
+      color: var(--ios-gray);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+    }
+
+    .task-list-container {
+      background: var(--ios-card-bg);
+      border-radius: 16px;
+      margin: 0 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .task-item {
+      padding: 16px;
+      border-bottom: 0.5px solid var(--ios-separator);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-item:active {
+      background: var(--ios-light-gray);
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-name {
+      font-size: 17px;
+      font-weight: 500;
+      color: #000;
+      margin-bottom: 4px;
+    }
+
+    .task-amount {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ios-purple);
+      letter-spacing: -0.5px;
+    }
+
+    .btn-edit-ios {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--ios-purple);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+      margin-left: 12px;
+    }
+
+    .btn-edit-ios:active {
+      transform: scale(0.9);
+      opacity: 0.8;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 40px;
+      color: var(--ios-gray);
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .empty-text {
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    /* iOS Safe Area */
+    @supports (padding: max(0px)) {
+      body {
+        padding-bottom: max(env(safe-area-inset-bottom), 0px);
+      }
+    }
+
+    /* Haptic Feedback Simulation */
+    .haptic {
+      animation: haptic 0.1s ease-out;
+    }
+
+    @keyframes haptic {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(0.97); }
+    }
+
+    /* iOS List Separator */
+    .list-separator {
+      height: 0.5px;
+      background: var(--ios-separator);
+      margin-left: 16px;
+    }
+
+    /* Responsive for larger screens */
+    @media (min-width: 428px) {
+      .ios-container {
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ios-light-gray: #000000;
+        --ios-card-bg: #1C1C1E;
+        --ios-separator: #38383A;
+        --ios-gray: #8E8E93;
+      }
+
+      .ios-label, .task-name, .ios-input {
+        color: #FFFFFF;
+      }
+
+      .balance-label, .stat-label {
+        color: var(--ios-gray);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- iOS Status Bar -->
+  <div class="status-bar">
+    9:41
+  </div>
+
+  <!-- iOS Navigation Bar -->
+  <div class="navbar-ios">
+    <button class="btn-trash" >
+      <i class="fas fa-trash-alt"></i>
+    </button>
+    <div style="padding-top: 12px;">
+      <div class="navbar-title">💰 Money Tracker</div>
+      <div class="navbar-subtitle">Manage your tasks and earnings</div>
+    </div>
+  </div>
+
+  <!-- iOS Container -->
+  <div class="ios-container">
+    <!-- Balance Card -->
+    <div class="ios-card">
+      <div class="ios-card-content balance-section">
+        <div class="balance-label">
+          <i class="fas fa-chart-line"></i>
+          Total Balance
+        </div>
+        <div class="balance-amount">₹<span class="total">0</span></div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-value"><span class="task-count">0</span></div>
+      </div>
+      <!-- <div class="stat-item">
+        <div class="stat-label">Average</div>
+        <div class="stat-value">₹<span class="average">0</span></div>
+      </div> -->
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section-header" id="form-header">Add New Task</div>
+    
+    <div class="ios-input-group">
+      <div class="ios-input-row">
+        <div style="width: 100%;">
+          <div class="ios-label">Expense Name</div>
+          <input type="text" class="ios-input" id="name" placeholder="e.g., Party or Food">
+        </div>
+      </div>
+      <div class="ios-input-row">
+        <div style="width: 100%;">
+          <div class="ios-label">Amount (₹)</div>
+          <input type="number" class="ios-input" id="money" placeholder="e.g., 500">
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Button -->
+    <button class="ios-button btn-primary-ios add-btn">
+      <i class="fas fa-plus"></i>
+      Add Task
+    </button>
+
+    <!-- Edit Buttons Group -->
+    <div class="button-group" style="display: none;">
+      <button class="ios-button btn-success-ios update-btn">
+        <i class="fas fa-check"></i>
+        Update
+      </button>
+      <button class="ios-button btn-danger-ios delete-btn">
+        <i class="fas fa-trash"></i>
+        Delete
+      </button>
+    </div>
+
+    <!-- Cancel Button -->
+    <button class="ios-button btn-secondary-ios back-btn" style="display: none;">
+      <i class="fas fa-xmark"></i>
+      Cancel
+    </button> 
+
+    <!-- Tasks List -->
+    <div class="task-list-header">Your Tasks</div>
+    
+    <div class="task-list-container" id="item-list">
+      <div class="empty-state " style="display: none;">
+        <div class="empty-icon">📋</div>
+        <div class="empty-text">No tasks yet<br>Add your first task above!</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="./js-script/index.js"></script>
+  <!-- <script>
+    // Data Controller
+    const dataController = (function () {
+      const Item = function (id, name, money) {
+        this.id = id;
+        this.name = name;
+        this.money = money;
+      };
+
+      const data = { items: [] };
+
+      return {
+        getData: () => data.items,
+        
+        addItem: function (name, money) {
+          const ID = data.items.length > 0 ? data.items[data.items.length - 1].id + 1 : 0;
+          const newItem = new Item(ID, name, parseInt(money));
+          data.items.push(newItem);
+          return newItem;
+        },
+
+        getItemById: (id) => data.items.find(item => item.id === id) || null,
+
+        updateItem: function (id, name, money) {
+          const item = data.items.find(item => item.id === id);
+          if (item) {
+            item.name = name;
+            item.money = parseInt(money);
+          }
+        },
+
+        deleteItem: function (id) {
+          const index = data.items.findIndex(item => item.id === id);
+          if (index !== -1) data.items.splice(index, 1);
+        },
+
+        clearAll: () => data.items = [],
+        getTotal: () => data.items.reduce((sum, item) => sum + item.money, 0),
+        getCount: () => data.items.length,
+        getAverage: function () {
+          const count = this.getCount();
+          return count > 0 ? Math.round(this.getTotal() / count) : 0;
+        }
+      };
+    })();
+
+    // UI Controller
+    const UIController = (function () {
+      return {
+        getInput: () => ({
+          name: document.querySelector("#name").value.trim(),
+          money: document.querySelector("#money").value.trim(),
+        }),
+
+        renderItems: function (items) {
+          const container = document.querySelector("#item-list");
+          
+          if (items.length === 0) {
+            container.innerHTML = `
+              <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <div class="empty-text">No tasks yet<br>Add your first task above!</div>
+              </div>
+            `;
+          } else {
+            let html = "";
+            items.forEach((item, index) => {
+              html += `
+                <div class="task-item" id="item-${item.id}">
+                  <div class="task-info">
+                    <div class="task-name">${item.name}</div>
+                    <div class="task-amount">₹${item.money}</div>
+                  </div>
+                  <button class="btn-edit-ios" data-id="${item.id}">
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                </div>
+                ${index < items.length - 1 ? '<div class="list-separator"></div>' : ''}
+              `;
+            });
+            container.innerHTML = html;
+          }
+        },
+
+        showEditMode: function () {
+          document.querySelector("#form-header").textContent = "Edit Task";
+          document.querySelector(".add-btn").style.display = "none";
+          document.querySelector(".button-group").style.display = "grid";
+          document.querySelector(".back-btn").style.display = "flex";
+        },
+
+        showAddMode: function () {
+          document.querySelector("#form-header").textContent = "Add New Task";
+          document.querySelector(".add-btn").style.display = "flex";
+          document.querySelector(".button-group").style.display = "none";
+          document.querySelector(".back-btn").style.display = "none";
+        },
+
+        fillInputs: (item) => {
+          document.querySelector("#name").value = item.name;
+          document.querySelector("#money").value = item.money;
+        },
+
+        clearInputs: () => {
+          document.querySelector("#name").value = "";
+          document.querySelector("#money").value = "";
+        },
+
+        updateStats: (total, count, average) => {
+          document.querySelector(".total").textContent = total;
+          document.querySelector(".task-count").textContent = count;
+          document.querySelector(".average").textContent = average;
+        },
+
+        addHaptic: (element) => {
+          element.classList.add('haptic');
+          setTimeout(() => element.classList.remove('haptic'), 100);
+        }
+      };
+    })();
+
+    // App Controller
+    const appController = (function () {
+      let currentItemId = null;
+
+      const setupEventListeners = () => {
+        document.querySelector(".add-btn").addEventListener("click", addTask);
+        document.querySelector("#item-list").addEventListener("click", editTask);
+        document.querySelector(".update-btn").addEventListener("click", updateTask);
+        document.querySelector(".delete-btn").addEventListener("click", deleteTask);
+        document.querySelector(".back-btn").addEventListener("click", cancelEdit);
+        
+        document.querySelector("#name").addEventListener("keypress", handleEnter);
+        document.querySelector("#money").addEventListener("keypress", handleEnter);
+      };
+
+      const handleEnter = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          currentItemId !== null ? updateTask() : addTask();
+        }
+      };
+
+      const addTask = function () {
+        const input = UIController.getInput();
+
+        if (!input.name || !input.money) {
+          alert("⚠️ Please fill in both fields!");
+          return;
+        }
+
+        if (isNaN(input.money) || parseInt(input.money) <= 0) {
+          alert("⚠️ Please enter a valid amount!");
+          return;
+        }
+
+        UIController.addHaptic(document.querySelector(".add-btn"));
+        dataController.addItem(input.name, input.money);
+        updateUI();
+        UIController.clearInputs();
+      };
+
+      const editTask = function (e) {
+        const editBtn = e.target.closest(".btn-edit-ios");
+        if (!editBtn) return;
+
+        UIController.addHaptic(editBtn);
+        const itemId = parseInt(editBtn.dataset.id);
+        currentItemId = itemId;
+
+        const item = dataController.getItemById(itemId);
+        if (item) {
+          UIController.fillInputs(item);
+          UIController.showEditMode();
+        }
+      };
+
+      const updateTask = function () {
+        const input = UIController.getInput();
+
+        if (!input.name || !input.money) {
+          alert("⚠️ Please fill in both fields!");
+          return;
+        }
+
+        if (isNaN(input.money) || parseInt(input.money) <= 0) {
+          alert("⚠️ Please enter a valid amount!");
+          return;
+        }
+
+        dataController.updateItem(currentItemId, input.name, input.money);
+        updateUI();
+        cancelEdit();
+      };
+
+      const deleteTask = () => {
+        if (confirm("Delete this task?")) {
+          dataController.deleteItem(currentItemId);
+          updateUI();
+          cancelEdit();
+        }
+      };
+
+      const cancelEdit = () => {
+        currentItemId = null;
+        UIController.clearInputs();
+        UIController.showAddMode();
+      };
+
+      const updateUI = () => {
+        const items = dataController.getData();
+        UIController.renderItems(items);
+        
+        const total = dataController.getTotal();
+        const count = dataController.getCount();
+        const average = dataController.getAverage();
+        UIController.updateStats(total, count, average);
+      };
+
+      return {
+        init: () => {
+          setupEventListeners();
+          UIController.showAddMode();
+          updateUI();
+        }
+      };
+    })();
+
+    function clearAll() {
+      if (confirm("⚠️ Delete all tasks?")) {
+        dataController.clearAll();
+        const items = dataController.getData();
+        UIController.renderItems(items);
+        UIController.updateStats(0, 0, 0);
+        UIController.clearInputs();
+        UIController.showAddMode();
+      }
+    }
+
+    // Initialize
+    appController.init();
+  </script> -->
+</body>
+</html>
+
+
